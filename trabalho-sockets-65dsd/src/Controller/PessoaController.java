@@ -15,7 +15,9 @@ public class PessoaController {
 
     public void insertPessoa(String cpf, String nome, String endereco) {
         Pessoa pessoa = new Pessoa(cpf, nome,endereco);
-        pessoas.add(pessoa);
+        if (!pessoas.contains(pessoa)) {
+            pessoas.add(pessoa);
+        }
     }
 
     public String updatePessoa(String cpf, String nome, String endereco) {
@@ -62,11 +64,14 @@ public class PessoaController {
         }
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(pessoas.size());
+        stringBuilder.append(String.format("%02d", pessoas.size())).append("\n");
         for (Pessoa pessoa : pessoas) {
-            stringBuilder.append(pessoa.toString());
-            stringBuilder.append("\n");
+            stringBuilder.append(pessoa.toString()).append("\n");
         }
         return stringBuilder.toString();
+    }
+
+    public List<Pessoa> getPessoas() {
+        return pessoas;
     }
 }

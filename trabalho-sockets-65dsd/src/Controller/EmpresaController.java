@@ -1,21 +1,26 @@
 package Controller;
 
 import Model.Empresa;
+import Model.Pessoa;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmpresaContoller {
+public class EmpresaController {
 
     private List<Empresa> empresas;
+    private PessoaController pessoaController;
 
-    public EmpresaContoller() {
+    public EmpresaController() {
         this.empresas = new ArrayList<>();
+        this.pessoaController = new PessoaController();
     }
 
     public void insertEmpresa (String razaoSocial, double capitalSocial) {
         Empresa empresa = new Empresa(razaoSocial, capitalSocial);
-        empresas.add(empresa);
+        if (!empresas.contains(empresa)) {
+            empresas.add(empresa);
+        }
     }
 
     public String updateEmpresa(String razaoSocial, double capitalSocial) {
@@ -61,11 +66,43 @@ public class EmpresaContoller {
         }
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(empresas.size());
+        stringBuilder.append(String.format("%02d", empresas.size())).append("\n");
         for (Empresa empresa : empresas) {
-            stringBuilder.append(empresa.toString());
-            stringBuilder.append("\n");
+            stringBuilder.append(empresa.toString()).append("\n");
         }
         return stringBuilder.toString();
+    }
+
+    public String vincularPessoa(String cpf, String razaoSocial) {
+        Empresa empresa = null;
+        for (Empresa emp : empresas) {
+            if (emp.getRazaoSocial().equalsIgnoreCase(razaoSocial)) {
+                empresa = emp;
+                break;
+            }
+        }
+
+        if (empresa == null) {
+            return "Empresa não encontrada";
+        }
+
+        Pessoa pessoa = null;
+        for (Pessoa pes : pessoaController.getPessoas()) {
+            if (pes.getCpf().equals(cpf)) {
+                pessoa = pes;
+                break;
+            }
+        }
+
+        if (pessoa == null) {
+            return "Pessoa não encontrada";
+        }
+
+        empresa.adicionarPessoa(pessoa);
+        return "Pessoa vinculada a empresa com sucesso";
+    }
+
+    public List<Empresa> getEmpresas() {
+        return empresas;
     }
 }
