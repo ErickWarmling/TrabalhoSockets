@@ -1,18 +1,19 @@
 package Model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Empresa {
 
     private String razaoSocial;
     private double capitalSocial;
-    private List<Pessoa> pessoas;
+    private Map<String, Funcionario> funcionarios;
+    private Map<String, Gerente> gerentes;
 
     public Empresa(String razaoSocial, double capitalSocial) {
         this.razaoSocial = razaoSocial;
         this.capitalSocial = capitalSocial;
-        this.pessoas = new ArrayList<>();
+        this.funcionarios = new HashMap<>();
+        this.gerentes = new HashMap<>();
     }
 
     public String getRazaoSocial() {
@@ -31,20 +32,38 @@ public class Empresa {
         this.capitalSocial = capitalSocial;
     }
 
-    public List<Pessoa> getPessoas() {
-        return pessoas;
+    public Map<String, Funcionario> getFuncionarios() {
+        return funcionarios;
     }
 
-    public void adicionarPessoa(Pessoa pessoa) {
-        if (!this.pessoas.contains(pessoa)) {
-            this.pessoas.add(pessoa);
-            pessoa.setEmpresa(this);
+    public Map<String, Gerente> getGerentes() {
+        return gerentes;
+    }
+
+    public void adicionarFuncionario(Funcionario funcionario) {
+        String cpf = funcionario.getCpf();
+        if (!this.funcionarios.containsKey(cpf)) {
+            this.funcionarios.put(cpf, funcionario);
+            funcionario.setEmpresa(this);
         }
     }
 
-    public void removerPessoa(Pessoa pessoa) {
-        this.pessoas.remove(pessoa);
-        pessoa.setEmpresa(null);
+    public void removerFuncionario(Funcionario funcionario) {
+        this.funcionarios.remove(funcionario.getCpf());
+        funcionario.setEmpresa(null);
+    }
+
+    public void adicionarGerente(Gerente gerente) {
+        String cpf = gerente.getCpf();
+        if (!this.gerentes.containsKey(cpf)) {
+            this.gerentes.put(cpf, gerente);
+            gerente.setEmpresa(this);
+        }
+    }
+
+    public void removerGerente(Gerente gerente) {
+        this.gerentes.remove(gerente.getCpf());
+        gerente.setEmpresa(null);
     }
 
     @Override

@@ -1,34 +1,36 @@
 package Controller;
 
 import Model.Empresa;
-import Model.Pessoa;
+import Model.Funcionario;
+import Model.Gerente;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EmpresaController {
 
-    private List<Empresa> empresas;
-    private PessoaController pessoaController;
+    private Map<String, Empresa> empresas;
+    private FuncionarioController funcionarioController;
+    private GerenteController gerenteController;
 
-    public EmpresaController() {
-        this.empresas = new ArrayList<>();
-        this.pessoaController = new PessoaController();
+
+    public EmpresaController(FuncionarioController funcionarioController, GerenteController gerenteController) {
+        this.empresas = new HashMap<>();
+        this.funcionarioController = funcionarioController;
+        this.gerenteController = gerenteController;
     }
 
     public void insertEmpresa (String razaoSocial, double capitalSocial) {
-        Empresa empresa = new Empresa(razaoSocial, capitalSocial);
-        if (!empresas.contains(empresa)) {
-            empresas.add(empresa);
+        if (!empresas.containsKey(razaoSocial)) {
+            empresas.put(razaoSocial, new Empresa(razaoSocial, capitalSocial));
         }
     }
 
     public String updateEmpresa(String razaoSocial, double capitalSocial) {
-        for (Empresa empresa : empresas) {
-            if (empresa.getRazaoSocial().equalsIgnoreCase(razaoSocial)) {
-                empresa.setCapitalSocial(capitalSocial);
-                return "Empresa atualizada com sucesso";
-            }
+        Empresa empresa = empresas.get(razaoSocial);
+        if (empresa != null) {
+            empresa.setCapitalSocial(capitalSocial);
+            return "Empresa atualizada com sucesso";
         }
         return "Empresa não encontrada";
     }
@@ -38,12 +40,29 @@ public class EmpresaController {
             return "Sem empresas cadastradas";
         }
 
-        for (Empresa empresa : empresas) {
-            if (empresa.getRazaoSocial().equalsIgnoreCase(razaoSocial)) {
-                return empresa.toString();
-            }
+        Empresa empresa = empresas.get(razaoSocial);
+        if (empresa == null) {
+            return "Empresa não encontrada";
         }
-        return "Empresa não encontrada";
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(empresa.toString()).append("\n");
+
+        int totalPessoas = empresa.getGerentes().size() + empresa.getFuncionarios().size();
+        sb.append(String.format("%02d", totalPessoas)).append("\n");
+
+        sb.append("Funcionários:\n");
+        for (Funcionario fun : empresa.getFuncionarios().values()){
+            sb.append(fun.toString()).append("\n");
+        }
+
+        sb.append("Gerentes:\n");
+        for (Gerente gerente : empresa.getGerentes().values()) {
+            sb.append(gerente.toString()).append("\n");
+        }
+
+        return sb.toString();
     }
 
     public String deleteEmpresa(String razaoSocial) {
@@ -51,11 +70,9 @@ public class EmpresaController {
             return "Sem empresas cadastradas";
         }
 
-        for (int i = 0; i < empresas.size(); i++) {
-            if (empresas.get(i).getRazaoSocial().equalsIgnoreCase(razaoSocial)) {
-                empresas.remove(i);
-                return "Empresa removida com sucesso";
-            }
+        Empresa empresa = empresas.remove(razaoSocial);
+        if (empresa != null) {
+            return "Empresa removida com sucesso";
         }
         return "Empresa não encontrada";
     }
@@ -67,42 +84,51 @@ public class EmpresaController {
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(String.format("%02d", empresas.size())).append("\n");
-        for (Empresa empresa : empresas) {
+        for (Empresa empresa : empresas.values()) {
             stringBuilder.append(empresa.toString()).append("\n");
         }
         return stringBuilder.toString();
     }
 
-    public String vincularPessoa(String cpf, String razaoSocial) {
-        Empresa empresa = null;
-        for (Empresa emp : empresas) {
-            if (emp.getRazaoSocial().equalsIgnoreCase(razaoSocial)) {
-                empresa = emp;
-                break;
-            }
-        }
-
+    public String vincularFuncionario(String razaoSocial, String cpfFuncionario) {
+        Empresa empresa = empresas.get(razaoSocial);
         if (empresa == null) {
             return "Empresa não encontrada";
         }
 
-        Pessoa pessoa = null;
-        for (Pessoa pes : pessoaController.getPessoas()) {
-            if (pes.getCpf().equals(cpf)) {
-                pessoa = pes;
-                break;
-            }
+        Funcionario funcionario = funcionarioController.getFuncionarios().get(cpfFuncionario);
+        if (funcionario == null) {
+            return "Funcionário não encontrado";
         }
 
-        if (pessoa == null) {
-            return "Pessoa não encontrada";
-        }
-
-        empresa.adicionarPessoa(pessoa);
-        return "Pessoa vinculada a empresa com sucesso";
+        empresa.adicionarFuncionario(funcionario);
+        return "Funcionário vinculado à empresa " + razaoSocial;
     }
 
-    public List<Empresa> getEmpresas() {
+    public String vincularGerente(String razaoSocial, String cpfGerente) {
+        Empresa empresa = empresas.get(razaoSocial);
+        if (empresa == null) {
+            return "Empresa não encontrada";
+        }
+
+        Gerente gerente = gerenteController.getGerentes().get(cpfGerente);
+        if (gerente == null) {
+            return "Gerente não encontrado";
+        }
+
+        empresa.adicionarGerente(gerente);
+        return "Gerente vinculado à empresa " + razaoSocial;
+    }
+
+    public Map<String, Empresa> getEmpresas() {
         return empresas;
+    }
+
+    public FuncionarioController getFuncionarioController() {
+        return funcionarioController;
+    }
+
+    public GerenteController getGerenteController() {
+        return gerenteController;
     }
 }
