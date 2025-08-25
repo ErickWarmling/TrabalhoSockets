@@ -1,4 +1,4 @@
-# Trabalho Sockets
+# Trabalho Sockets - 65DSD
 
 💻 Repositório destinado ao Trabalho 1 - Sockets da disciplina de Desenvolvimento de Sistemas Paralelos e Distribuídos (65DSD).
 
