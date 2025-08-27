@@ -23,11 +23,15 @@ public class Servidor {
 
     public void inicializarServidor(int porta) throws IOException {
        try (ServerSocket serverSocket = new ServerSocket(porta);) {
+           System.out.println("\n======================================");
+           System.out.println("              SERVIDOR       ");
+           System.out.println("======================================");
            System.out.println("Servidor rodando na porta " + porta);
 
            while (true) {
                System.out.println("Aguardando conexão...");
                Socket socket = serverSocket.accept();
+               System.out.println("--------------------------------------");
                System.out.println("Cliente conectado: " + socket.getInetAddress().getHostAddress());
 
                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -42,7 +46,8 @@ public class Servidor {
                in.close();
                out.close();
                socket.close();
-               System.out.println("Socket encerrado pelo servidor");
+               System.out.println("Cliente " + socket.getInetAddress().getHostAddress() + " desconectou");
+               System.out.println("--------------------------------------\n");
            }
        } catch (Exception e) {
            e.printStackTrace();

@@ -24,17 +24,25 @@ public class Cliente {
         while (true) {
             Socket socket = null;
 
-            System.out.println("\n===== TRABALHO 1 SOCKET (65DSD) =====");
+            System.out.println("\n====================================== \n"
+                    + "      TRABALHO 1 SOCKETS (65DSD) \n"
+                    + "======================================");
+
+            System.out.println("------- FUNCIONÁRIOS ------");
             System.out.println("1. Inserir Funcionário");
             System.out.println("2. Atualizar Funcionário");
             System.out.println("3. Buscar Funcionário");
             System.out.println("4. Remover Funcionário");
             System.out.println("5. Listar Funcionários");
+
+            System.out.println("\n-------- GERENTES --------");
             System.out.println("6. Inserir Gerente");
             System.out.println("7. Atualizar Gerente");
             System.out.println("8. Buscar Gerente");
             System.out.println("9. Remover Gerente");
             System.out.println("10. Listar Gerentes");
+
+            System.out.println("\n-------- EMPRESAS --------");
             System.out.println("11. Inserir Empresa");
             System.out.println("12. Atualizar Empresa");
             System.out.println("13. Buscar Empresa");
@@ -50,6 +58,7 @@ public class Cliente {
 
             switch (opcao) {
                 case 1:
+                    System.out.println(">>>>>> Inserir Funcionário <<<<<<");
                     System.out.println("CPF: ");
                     String cpf = s.nextLine();
                     System.out.println("Nome: ");
@@ -61,6 +70,7 @@ public class Cliente {
                     mensagem = "INSERT_FUNCIONARIO;" + cpf + ";" + nome + ";" + endereco + ";" + salario;
                     break;
                 case 2:
+                    System.out.println(">>>>>> Atualizar Funcionário <<<<<<");
                     System.out.println("CPF: ");
                     cpf = s.nextLine();
                     System.out.println("Novo nome: ");
@@ -72,11 +82,13 @@ public class Cliente {
                     mensagem = "UPDATE_FUNCIONARIO;" + cpf + ";" + nome + ";" + endereco + ";" + salario;
                     break;
                 case 3:
+                    System.out.println(">>>>>> Buscar Funcionário <<<<<<");
                     System.out.println("CPF do Funcionário: ");
                     cpf = s.nextLine();
                     mensagem = "GET_FUNCIONARIO;" + cpf;
                     break;
                 case 4:
+                    System.out.println(">>>>>> Remover Funcionário <<<<<<");
                     System.out.println("CPF do Funcionário: ");
                     cpf = s.nextLine();
                     mensagem = "DELETE_FUNCIONARIO;" + cpf;
@@ -86,6 +98,7 @@ public class Cliente {
                     break;
 
                 case 6:
+                    System.out.println(">>>>>> Inserir Gerente <<<<<<");
                     System.out.println("CPF: ");
                     cpf = s.nextLine();
                     System.out.println("Nome: ");
@@ -97,6 +110,7 @@ public class Cliente {
                     mensagem = "INSERT_GERENTE;" + cpf + ";" + nome + ";" + endereco + ";" + departamento;
                     break;
                 case 7:
+                    System.out.println(">>>>>> Atualizar Gerente <<<<<<");
                     System.out.println("CPF: ");
                     cpf = s.nextLine();
                     System.out.println("Novo nome: ");
@@ -108,11 +122,13 @@ public class Cliente {
                     mensagem = "UPDATE_GERENTE;" + cpf + ";" + nome + ";" + endereco + ";" + departamento;
                     break;
                 case 8:
+                    System.out.println(">>>>>> Buscar Gerente <<<<<<");
                     System.out.println("CPF do Gerente: ");
                     cpf = s.nextLine();
                     mensagem = "GET_GERENTE;" + cpf;
                     break;
                 case 9:
+                    System.out.println(">>>>>> Remover Gerente <<<<<<");
                     System.out.println("CPF do Gerente: ");
                     cpf = s.nextLine();
                     mensagem = "DELETE_GERENTE;" + cpf;
@@ -122,6 +138,7 @@ public class Cliente {
                     break;
 
                 case 11:
+                    System.out.println(">>>>>> Inserir Empresa <<<<<<");
                     System.out.println("Razão Social: ");
                     String razaoSocial = s.nextLine();
                     System.out.println("Capital Social: ");
@@ -129,19 +146,22 @@ public class Cliente {
                     mensagem = "INSERT_EMPRESA;" + razaoSocial + ";" + capitalSocial;
                     break;
                 case 12:
+                    System.out.println(">>>>>> Atualizar Empresa <<<<<<");
                     System.out.println("Razão Social: ");
                     razaoSocial = s.nextLine();
                     System.out.println("Novo capital social: ");
-                    capitalSocial = s.nextDouble();
+                    capitalSocial = Double.parseDouble(s.nextLine());
                     s.nextLine();
                     mensagem = "UPDATE_EMPRESA;" + razaoSocial + ";" + capitalSocial;
                     break;
                 case 13:
+                    System.out.println(">>>>>> Buscar Empresa <<<<<<");
                     System.out.println("Razão Social: ");
                     razaoSocial = s.nextLine();
                     mensagem = "GET_EMPRESA;" + razaoSocial;
                     break;
                 case 14:
+                    System.out.println(">>>>>> Remover Empresa <<<<<<");
                     System.out.println("Razão Social: ");
                     razaoSocial = s.nextLine();
                     mensagem = "DELETE_EMPRESA;" + razaoSocial;
@@ -150,6 +170,7 @@ public class Cliente {
                     mensagem = "LIST_EMPRESA";
                     break;
                 case 16:
+                    System.out.println(">>>>>> Vincular Pessoa a Empresa <<<<<<");
                     System.out.println("Razão Social da Empresa: ");
                     razaoSocial = s.nextLine();
                     System.out.println("CPF da Pessoa: ");
@@ -157,6 +178,7 @@ public class Cliente {
                     mensagem = "VINCULAR_PESSOA_EMPRESA;" + razaoSocial + ";" + cpf;
                     break;
                 case 17:
+                    System.out.println(">>>>>> Desvincular Pessoa da Empresa <<<<<<");
                     System.out.println("Razão Social da Empresa: ");
                     razaoSocial = s.nextLine();
                     System.out.println("CPF da Pessoa: ");
@@ -184,7 +206,13 @@ public class Cliente {
                 while ((linha = in.readLine()) != null) {
                     resposta.append(linha).append("\n");
                 }
-                System.out.print("Resposta Servidor:\n" + resposta);
+                System.out.println(
+                        "\n--------------------------------------\n" +
+                                "         RESPOSTA DO SERVIDOR       \n" +
+                                "--------------------------------------\n" +
+                                resposta +
+                                "--------------------------------------"
+                );
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

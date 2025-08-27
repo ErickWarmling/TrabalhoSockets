@@ -28,9 +28,8 @@ public class FuncionarioController {
             fun.setEndereco(endereco);
             fun.setSalario(salario);
             return "Funcionário atualizado com sucesso";
-        } else {
-            return "Funcionário não encontrado";
         }
+        return "Funcionário não encontrado";
     }
 
     public String getFuncionario(String cpf){
@@ -41,9 +40,8 @@ public class FuncionarioController {
         Funcionario fun = funcionarios.get(cpf);
         if(fun != null){
             return fun.toString();
-        }else{
-            return "Funcionário não encontrado";
         }
+        return "Funcionário não encontrado";
     }
 
     public String deleteFuncionario(String cpf){
