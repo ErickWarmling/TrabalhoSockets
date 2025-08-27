@@ -1,4 +1,4 @@
-package Model;
+package Servidor.Model;
 
 public abstract class Pessoa {
 

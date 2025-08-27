@@ -1,15 +1,13 @@
-package Socket;
+package Servidor;
 
-import Controller.EmpresaController;
-import Controller.FuncionarioController;
-import Controller.GerenteController;
+import Servidor.Controller.EmpresaController;
+import Servidor.Controller.FuncionarioController;
+import Servidor.Controller.GerenteController;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Properties;
 
 public class Servidor {
 
@@ -28,8 +26,9 @@ public class Servidor {
            System.out.println("Servidor rodando na porta " + porta);
 
            while (true) {
+               System.out.println("Aguardando conexão...");
                Socket socket = serverSocket.accept();
-               System.out.println("Conexão recebida");
+               System.out.println("Cliente conectado: " + socket.getInetAddress().getHostAddress());
 
                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -60,8 +59,7 @@ public class Servidor {
 
         switch (operacao) {
             case "INSERT_FUNCIONARIO":
-                funcionarioController.insertFuncionario(camposMensagem[1], camposMensagem[2], camposMensagem[3], Double.parseDouble(camposMensagem[4]));
-                return "Funcionário incluído com sucesso";
+                return funcionarioController.insertFuncionario(camposMensagem[1], camposMensagem[2], camposMensagem[3], Double.parseDouble(camposMensagem[4]));
             case "UPDATE_FUNCIONARIO":
                 return funcionarioController.updateFuncionario(camposMensagem[1], camposMensagem[2], camposMensagem[3], Double.parseDouble(camposMensagem[4]));
             case "GET_FUNCIONARIO":
@@ -72,8 +70,7 @@ public class Servidor {
                 return funcionarioController.listFuncionarios();
 
             case "INSERT_GERENTE":
-               gerenteController.insertGerente(camposMensagem[1], camposMensagem[2], camposMensagem[3], camposMensagem[4]);
-               return "Gerente incluído com sucesso";
+               return gerenteController.insertGerente(camposMensagem[1], camposMensagem[2], camposMensagem[3], camposMensagem[4]);
             case "UPDATE_GERENTE":
                 return gerenteController.updateGerente(camposMensagem[1], camposMensagem[2], camposMensagem[3], camposMensagem[4]);
             case "GET_GERENTE":
@@ -84,8 +81,7 @@ public class Servidor {
                 return gerenteController.listGerentes();
 
             case "INSERT_EMPRESA":
-                empresaController.insertEmpresa(camposMensagem[1], Double.parseDouble(camposMensagem[2]));
-                return "Empresa incluída com sucesso";
+                return empresaController.insertEmpresa(camposMensagem[1], Double.parseDouble(camposMensagem[2]));
             case "UPDATE_EMPRESA":
                 return empresaController.updateEmpresa(camposMensagem[1], Double.parseDouble(camposMensagem[2]));
             case "GET_EMPRESA":
@@ -105,13 +101,32 @@ public class Servidor {
                 } else {
                     return "Pessoa não encontrada";
                 }
+            case "DESVINCULAR_PESSOA_EMPRESA":
+                razaoSocial = camposMensagem[1];
+                cpf = camposMensagem[2];
+
+                if (funcionarioController.getFuncionarios().containsKey(cpf)) {
+                    return empresaController.desvincularFuncionario(razaoSocial, cpf);
+                } else if (gerenteController.getGerentes().containsKey(cpf)) {
+                    return empresaController.desvincularGerente(razaoSocial, cpf);
+                } else {
+                    return "Pessoa não encontrada";
+                }
             default:
                 return "Operação inválida!";
         }
     }
 
     public static void main(String[] args) throws IOException {
+        Properties props = new Properties();
+        try (FileInputStream fileInputStream = new FileInputStream("servidor.properties")) {
+            props.load(fileInputStream);
+        } catch (IOException e) {
+            System.out.println("Não foi possível ler o servidor.properties");
+        }
+
+        int porta = Integer.parseInt(props.getProperty("porta"));
         Servidor servidor = new Servidor();
-        servidor.inicializarServidor(65000);
+        servidor.inicializarServidor(porta);
     }
 }

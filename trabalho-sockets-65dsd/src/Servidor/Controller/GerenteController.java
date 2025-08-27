@@ -1,6 +1,6 @@
-package Controller;
+package Servidor.Controller;
 
-import Model.Gerente;
+import Servidor.Model.Gerente;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,10 +13,12 @@ public class GerenteController {
         this.gerentes = new HashMap<>();
     }
 
-    public void insertGerente(String cpf, String nome, String endereco, String departamento) {
+    public String insertGerente(String cpf, String nome, String endereco, String departamento) {
         if (!gerentes.containsKey(cpf)) {
             gerentes.put(cpf, new Gerente(cpf, nome, endereco,departamento));
+            return "Gerente incluído com sucesso";
         }
+        return "Gerente já existente";
     }
 
     public String updateGerente(String cpf, String nome, String endereco, String departamento) {
@@ -47,8 +49,12 @@ public class GerenteController {
             return "Sem gerentes cadastrados";
         }
 
-        Gerente gerente = gerentes.remove(cpf);
+        Gerente gerente = gerentes.get(cpf);
         if (gerente != null) {
+            if (gerente.getEmpresa() != null) {
+                gerente.getEmpresa().removerGerente(gerente);
+            }
+            gerentes.remove(cpf);
             return "Gerente removido com sucesso";
         }
         return "Gerente não encontrado";

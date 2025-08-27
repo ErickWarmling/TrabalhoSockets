@@ -1,8 +1,8 @@
-package Controller;
+package Servidor.Controller;
 
-import Model.Empresa;
-import Model.Funcionario;
-import Model.Gerente;
+import Servidor.Model.Empresa;
+import Servidor.Model.Funcionario;
+import Servidor.Model.Gerente;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +20,12 @@ public class EmpresaController {
         this.gerenteController = gerenteController;
     }
 
-    public void insertEmpresa (String razaoSocial, double capitalSocial) {
+    public String insertEmpresa (String razaoSocial, double capitalSocial) {
         if (!empresas.containsKey(razaoSocial)) {
             empresas.put(razaoSocial, new Empresa(razaoSocial, capitalSocial));
+            return "Empresa incluída com sucesso";
         }
+        return "Empresa já existente";
     }
 
     public String updateEmpresa(String razaoSocial, double capitalSocial) {
@@ -72,6 +74,14 @@ public class EmpresaController {
 
         Empresa empresa = empresas.remove(razaoSocial);
         if (empresa != null) {
+            for (Funcionario funcionario : empresa.getFuncionarios().values()) {
+                empresa.removerFuncionario(funcionario);
+            }
+
+            for (Gerente gerente : empresa.getGerentes().values()) {
+                empresa.removerGerente(gerente);
+            }
+
             return "Empresa removida com sucesso";
         }
         return "Empresa não encontrada";
@@ -101,8 +111,31 @@ public class EmpresaController {
             return "Funcionário não encontrado";
         }
 
+        if (funcionario.getEmpresa() == empresa) {
+            return "Funcionário já está vinculado à empresa " + razaoSocial;
+        }
+
         empresa.adicionarFuncionario(funcionario);
         return "Funcionário vinculado à empresa " + razaoSocial;
+    }
+
+    public String desvincularFuncionario(String razaoSocial, String cpfFuncionario) {
+        Empresa empresa = empresas.get(razaoSocial);
+        if (empresa == null) {
+            return "Empresa não encontrada";
+        }
+
+        Funcionario funcionario = funcionarioController.getFuncionarios().get(cpfFuncionario);
+        if (funcionario == null) {
+            return "Funcionário não encontrado";
+        }
+
+        if (funcionario.getEmpresa() != empresa) {
+            return "Funcionário não está vinculado à empresa " + razaoSocial;
+        }
+
+        empresa.removerFuncionario(funcionario);
+        return "Funcionário desvinculado da empresa " + razaoSocial;
     }
 
     public String vincularGerente(String razaoSocial, String cpfGerente) {
@@ -116,8 +149,31 @@ public class EmpresaController {
             return "Gerente não encontrado";
         }
 
+        if (gerente.getEmpresa() == empresa) {
+            return "Gerente já está vinculado à empresa " + razaoSocial;
+        }
+
         empresa.adicionarGerente(gerente);
         return "Gerente vinculado à empresa " + razaoSocial;
+    }
+
+    public String desvincularGerente(String razaoSocial, String cpfGerente) {
+        Empresa empresa = empresas.get(razaoSocial);
+        if (empresa == null) {
+            return "Empresa não encontrado";
+        }
+
+        Gerente gerente = gerenteController.getGerentes().get(cpfGerente);
+        if (gerente == null) {
+            return "Gerente não encontrado";
+        }
+
+        if (gerente.getEmpresa() != empresa) {
+            return "Gerente não está vinculado à empresa " + razaoSocial;
+        }
+
+        empresa.removerGerente(gerente);
+        return "Gerente desvinculado da empresa " + razaoSocial;
     }
 
     public Map<String, Empresa> getEmpresas() {

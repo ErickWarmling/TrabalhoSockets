@@ -1,17 +1,23 @@
-package Socket;
+package Cliente;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class Cliente {
 
     public static void main(String[] args) throws IOException {
-        String servidor = "127.0.0.1";
-        int porta = 65000;
+        Properties props = new Properties();
+
+        try (FileInputStream fileInputStream = new FileInputStream("cliente.properties")) {
+            props.load(fileInputStream);
+        } catch (IOException e) {
+            System.out.println("Não foi possível ler o cliente.properties");
+        }
+
+        String servidor = props.getProperty("servidor");
+        int porta = Integer.parseInt(props.getProperty("porta"));
 
         Scanner s = new Scanner(System.in);
 
@@ -35,6 +41,7 @@ public class Cliente {
             System.out.println("14. Remover Empresa");
             System.out.println("15. Listar Empresas");
             System.out.println("16. Vincular Pessoa à Empresa");
+            System.out.println("17. Desvincular Pessoa da Empresa");
             System.out.println("0. Sair do sistema");
             System.out.println("Escolha uma opcão: ");
 
@@ -118,8 +125,7 @@ public class Cliente {
                     System.out.println("Razão Social: ");
                     String razaoSocial = s.nextLine();
                     System.out.println("Capital Social: ");
-                    double capitalSocial = s.nextDouble();
-                    s.nextLine();
+                    double capitalSocial = Double.parseDouble(s.nextLine());
                     mensagem = "INSERT_EMPRESA;" + razaoSocial + ";" + capitalSocial;
                     break;
                 case 12:
@@ -150,8 +156,15 @@ public class Cliente {
                     cpf = s.nextLine();
                     mensagem = "VINCULAR_PESSOA_EMPRESA;" + razaoSocial + ";" + cpf;
                     break;
+                case 17:
+                    System.out.println("Razão Social da Empresa: ");
+                    razaoSocial = s.nextLine();
+                    System.out.println("CPF da Pessoa: ");
+                    cpf = s.nextLine();
+                    mensagem = "DESVINCULAR_PESSOA_EMPRESA;" + razaoSocial + ";" + cpf;
+                    break;
                 case 0:
-                    System.out.println("Encerrando...");
+                    System.out.println("Encerrando o sistema...");
                     s.close();
                     return;
                 default:
