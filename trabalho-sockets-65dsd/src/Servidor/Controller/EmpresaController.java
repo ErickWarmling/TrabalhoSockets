@@ -111,8 +111,12 @@ public class EmpresaController {
             return "Funcionário não encontrado";
         }
 
-        if (funcionario.getEmpresa() == empresa) {
-            return "Funcionário já está vinculado à empresa " + razaoSocial;
+        if (funcionario.getEmpresa() != null) {
+            if (funcionario.getEmpresa() == empresa) {
+                return "Funcionário já está vinculado à empresa " + razaoSocial;
+            } else {
+                return "Funcionário já está vinculado a outra empresa: " + funcionario.getEmpresa().getRazaoSocial();
+            }
         }
 
         empresa.adicionarFuncionario(funcionario);
@@ -149,8 +153,12 @@ public class EmpresaController {
             return "Gerente não encontrado";
         }
 
-        if (gerente.getEmpresa() == empresa) {
-            return "Gerente já está vinculado à empresa " + razaoSocial;
+        if (gerente.getEmpresa() != null) {
+            if (gerente.getEmpresa() == empresa) {
+                return "Gerente já está vinculado à empresa " + razaoSocial;
+            } else {
+                return "Gerente já está vinculado a outra empresa: " + gerente.getEmpresa().getRazaoSocial();
+            }
         }
 
         empresa.adicionarGerente(gerente);
